@@ -12,19 +12,19 @@ struct MovieDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 10) { // Add spacing between elements
+            VStack(alignment: .leading, spacing: 10) {
                 GeometryReader { geometry in
                     if let path = movie.posterPath, let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)") {
                         AsyncImage(url: url)
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: geometry.size.width, height: 500) // Adjust the height
-                            .clipped() // Ensure the image does not overflow its bounds
+                            .frame(width: geometry.size.width, height: 500)
+                            .clipped()
                     }
                 }
-                .frame(height: 500) // Set a fixed height for the image container
+                .frame(height: 500)
                 Spacer()
                 Text(movie.title)
-                    .font(.title2) // Adjust font size if needed
+                    .font(.title2)
                     .padding(.bottom, 1)
                 
                 HStack {
@@ -32,7 +32,7 @@ struct MovieDetailView: View {
                         ForEach(0..<Int(average.rounded())) { _ in
                             Image(systemName: "star.fill")
                                 .foregroundColor(.yellow)
-                                .imageScale(.small) // Make stars smaller to fit better
+                                .imageScale(.small) 
                         }
                     }
                 }
