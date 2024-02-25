@@ -8,6 +8,8 @@
 import Foundation
 import Security
 
+// Referance 1: https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/storing_keys_in_the_keychain
+// Referance 2: https://www.andyibanez.com/posts/using-ios-keychain-swift/
 class KeychainHelper {
     static func save(key: String, data: Data) -> OSStatus {
         let query = [
