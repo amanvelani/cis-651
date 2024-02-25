@@ -12,16 +12,22 @@ struct MovieListView: View {
 
     var body: some View {
         NavigationView {
-            List(viewModel.movies) { movie in
-                NavigationLink(destination: MovieDetailView(movie: movie)) {
-                    MovieRow(movie: movie)
-                }
+            List() {
+                ForEach(viewModel.movies){ movie in
+                    NavigationLink(destination: MovieDetailView(movie: movie, viewModel: viewModel)){
+                        MovieRow(movie: movie)
+                    }
+                }.onDelete(perform: deleteMovie)
             }
             .navigationTitle("Movies")
         }
         .onAppear {
             viewModel.fetchMovies()
         }
+    }
+    private func deleteMovie(at offsets: IndexSet) {
+        viewModel.movies.remove(atOffsets: offsets)
+        viewModel.saveMovies()
     }
 }
 

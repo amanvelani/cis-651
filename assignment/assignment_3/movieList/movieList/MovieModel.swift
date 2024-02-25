@@ -1,6 +1,6 @@
 import Foundation
 
-struct MovieModel: Identifiable, Decodable {
+struct MovieModel: Identifiable, Decodable, Encodable {
     let id: Int?
     let title: String
     let backdropPath: String?
