@@ -9,26 +9,39 @@ import SwiftUI
 
 struct MovieListView: View {
     @StateObject var viewModel = MovieViewModel()
+    @Binding var navigatingToDetail: Bool  // Add this line
+
 
     var body: some View {
-        NavigationView {
+        VStack{
             List() {
                 ForEach(viewModel.movies){ movie in
-                    NavigationLink(destination: MovieDetailView(movie: movie, viewModel: viewModel)){
+                    NavigationLink(destination: MovieDetailView(movie: movie, viewModel: viewModel, navigatingToDetail: $navigatingToDetail)){
                         MovieRow(movie: movie)
                     }
                 }.onDelete(perform: deleteMovie)
             }
             .navigationTitle("Movies")
-        }
-        .onAppear {
+            
+        }.onAppear {
+            UserDefaults.standard.removeObject(forKey: "LastViewedMovieID")
+            viewModel.lastViewedMovieId = nil
+            navigatingToDetail = false
             viewModel.fetchMovies()
         }
     }
     private func deleteMovie(at offsets: IndexSet) {
+        let idsToDelete = offsets.compactMap { viewModel.movies[$0].id }
         viewModel.movies.remove(atOffsets: offsets)
         viewModel.saveMovies()
+            
+        if let lastMovieId = viewModel.lastMovieId(), idsToDelete.contains(lastMovieId) {
+            UserDefaults.standard.removeObject(forKey: "LastViewedMovie")
+            UserDefaults.standard.removeObject(forKey: "LastViewedMovieID")
+            viewModel.lastViewedMovieId = nil
+        }
     }
+
 }
 
 struct MovieRow: View {
@@ -50,8 +63,4 @@ struct MovieRow: View {
             }
         }
     }
-}
-
-#Preview(){
-    MovieListView()
 }

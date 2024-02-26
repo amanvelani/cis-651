@@ -35,4 +35,13 @@ class KeychainHelper {
         }
         return nil
     }
+    
+    func retrieveToken() -> String {
+        if let receivedData = KeychainHelper.load(key: "bearerToken"),
+           let tokenString = String(data: receivedData, encoding: .utf8) {
+            return tokenString
+        } else {
+            return "Failed to retrieve or decode token"
+        }
+    }
 }

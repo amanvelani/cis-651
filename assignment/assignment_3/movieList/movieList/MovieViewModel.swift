@@ -10,21 +10,24 @@ import Combine
 
 class MovieViewModel: ObservableObject{
     @Published var movies = [MovieModel]()
+    @Published var keychain = KeychainHelper()
+    
+    var lastViewedMovieId: Int?
+
     private var cancellables = Set<AnyCancellable>()
     var listId = 65056
-    var token: String?
+    lazy var token: String = self.keychain.retrieveToken()
+
     init() {
-        self.token = retrieveToken()
         loadMovies()
     }
 
 
     func fetchMovies(){
-        print("Token: \(token!)")
         if movies.isEmpty{
             guard let url = URL(string: "https://api.themoviedb.org/4/list/65056?page=1") else { return }
             var request = URLRequest(url: url)
-            request.setValue("Bearer \(token!)", forHTTPHeaderField: "Authorization")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             
             URLSession.shared.dataTaskPublisher(for: request)
                 .map { response -> Data in
@@ -51,6 +54,7 @@ class MovieViewModel: ObservableObject{
     func saveLastViewedMovie(_ movie: MovieModel) {
         if let movieData = try? JSONEncoder().encode(movie) {
             UserDefaults.standard.set(movieData, forKey: "LastViewedMovie")
+            UserDefaults.standard.set(movie.id, forKey: "LastViewedMovieID") // Save ID separately if needed.
         }
     }
         
@@ -60,6 +64,10 @@ class MovieViewModel: ObservableObject{
                 return lastMovie
             }
             return nil
+    }
+    
+    func lastMovieId() -> Int? {
+        return UserDefaults.standard.integer(forKey: "LastViewedMovieID")
     }
     
     func saveMovies() {
@@ -72,15 +80,6 @@ class MovieViewModel: ObservableObject{
         if let savedMovies = UserDefaults.standard.data(forKey: "SavedMovies"),
             let decodedMovies = try? JSONDecoder().decode([MovieModel].self, from: savedMovies) {
             self.movies = decodedMovies
-        }
-    }
-    
-    func retrieveToken() -> String {
-        if let receivedData = KeychainHelper.load(key: "bearerToken"),
-           let tokenString = String(data: receivedData, encoding: .utf8) {
-            return tokenString
-        } else {
-            return "Failed to retrieve or decode token"
         }
     }
 

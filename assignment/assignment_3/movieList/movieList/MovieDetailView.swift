@@ -9,7 +9,8 @@ import SwiftUI
 
 struct MovieDetailView: View {
     let movie: MovieModel
-    @ObservedObject var viewModel: MovieViewModel
+    @StateObject var viewModel: MovieViewModel
+    @Binding var navigatingToDetail: Bool  // Add this line
 
     var body: some View {
         ScrollView {
@@ -51,10 +52,31 @@ struct MovieDetailView: View {
                     .font(.body)
             }
             .padding()
+        }.navigationBarTitle(Text(movie.title), displayMode: .inline)
+//        .navigationBarBackButtonHidden(true) // Ensure back button is not hidden
+            .onAppear {
+                viewModel.saveLastViewedMovie(movie)
+            }
+//        }.navigationBarItems(leading: Button(action: {
+//            if self.navigatingToDetail{
+//                self.navigatingToDetail = false
+//            }
+//        }) {
+//            Image(systemName: "arrow.left") // Use a system image or your own
+//            Text("Back")
+//        })
+         .navigationBarItems(leading: navigatingToDetail ? AnyView(customBackButton) : AnyView(EmptyView()))
         }
-        .navigationBarTitle(Text(movie.title), displayMode: .inline)
-        .onDisappear {
-            viewModel.saveLastViewedMovie(movie)
-        }
+    private var customBackButton: some View {
+            Button(action: {
+                self.navigatingToDetail = false
+            }) {
+                HStack {
+                    Image(systemName: "arrow.left") // System image for back button
+                    Text("Movies")
+                }
+            }
     }
-}
+        
+    }
+    
