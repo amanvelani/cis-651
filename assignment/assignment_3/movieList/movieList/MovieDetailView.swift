@@ -8,75 +8,123 @@
 import SwiftUI
 
 struct MovieDetailView: View {
-    let movie: MovieModel
+    let movieId: Int
     @StateObject var viewModel: MovieViewModel
-    @Binding var navigatingToDetail: Bool  // Add this line
-
+    @State var movie: MovieModel?
+    @State private var text: String = ""
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        if let posterPath = movie.posterPath {
-                            let posterURL = URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
-                            AsyncImage(url: posterURL)
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 300)
-                        }
-                        if let backdropPath = movie.backdropPath {
-                            let backdropURL = URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)")
-                            AsyncImage(url: backdropURL)
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 300)
+                        ForEach(0..<2, id: \.self) { _ in // For demo purposes; ideally, use actual images if available
+                            if let posterPath = movie?.posterPath {
+                                let posterURL = URL(string: "https://image.tmdb.org/t/p/w342\(posterPath)")
+                                AsyncImage(url: posterURL)
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 300)
+                            }
+                            if let backdropPath = movie?.backdropPath {
+                                let backdropURL = URL(string: "https://image.tmdb.org/t/p/w342\(backdropPath)")
+                                AsyncImage(url: backdropURL)
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 300)
+                            }
                         }
                     }
                 }
                 .frame(height: 300)
                 
-                Text(movie.title)
-                    .font(.title2)
-                    .padding(.bottom, 1)
+                if let title = movie?.title {
+                    Text(title)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.bottom, 1)
+                }
+                
+                if let tagline = movie?.tagline, !tagline.isEmpty {
+                    Text("\"\(tagline)\"")
+                        .font(.title3)
+                        .italic()
+                        .padding(.bottom, 2)
+                }
                 
                 HStack {
-                    if let average = movie.voteAverage {
-                        ForEach(0..<Int(average.rounded()), id: \.self) { _ in
+                    if let average = movie?.voteAverage {
+                        let fullStars = Int(average)
+                        let hasHalfStar = average.truncatingRemainder(dividingBy: 1) >= 0.35
+                        let maxStars = 10
+
+                        ForEach(0..<fullStars, id: \.self) { _ in
                             Image(systemName: "star.fill")
                                 .foregroundColor(.yellow)
-                                .imageScale(.small)
+                                .font(.title2)
+                        }
+
+                        if hasHalfStar {
+                            Image(systemName: "star.leadinghalf.filled")
+                                .foregroundColor(.yellow)
+                                .font(.title2)
+                        }
+
+                        ForEach(0..<maxStars - fullStars - (hasHalfStar ? 1 : 0), id: \.self) { _ in
+                            Image(systemName: "star")
+                                .foregroundColor(.yellow)
+                                .font(.title2)
                         }
                     }
                 }
                 .padding(.bottom, 2)
+
+                if let genres = movie?.genres {
+                    Text(genres.map { $0.name }.joined(separator: ", "))
+                        .font(.headline)
+                        .padding(.bottom, 1)
+                }
                 
-                Text(movie.overview ?? "No description available.")
+                if let releaseDate = movie?.releaseDate {
+                    Text("Release date: \(releaseDate)")
+                        .font(.subheadline)
+                        .padding(.bottom, 1)
+                }
+                
+                if let runtime = movie?.runtime {
+                    Text("Runtime: \(runtime) min")
+                        .font(.subheadline)
+                        .padding(.bottom, 2)
+                }
+                
+                Text(movie?.overview ?? "No description available.")
                     .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .lineSpacing(5)
+                    .multilineTextAlignment(.leading)
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(10)
+                    .shadow(radius: 3)
+
+                    
             }
             .padding()
-        }.navigationBarTitle(Text(movie.title), displayMode: .inline)
-//        .navigationBarBackButtonHidden(true) // Ensure back button is not hidden
-            .onAppear {
-                viewModel.saveLastViewedMovie(movie)
-            }
-//        }.navigationBarItems(leading: Button(action: {
-//            if self.navigatingToDetail{
-//                self.navigatingToDetail = false
-//            }
-//        }) {
-//            Image(systemName: "arrow.left") // Use a system image or your own
-//            Text("Back")
-//        })
-         .navigationBarItems(leading: navigatingToDetail ? AnyView(customBackButton) : AnyView(EmptyView()))
         }
-    private var customBackButton: some View {
-            Button(action: {
-                self.navigatingToDetail = false
-            }) {
-                HStack {
-                    Image(systemName: "arrow.left") // System image for back button
-                    Text("Movies")
+        .navigationBarTitle(Text(movie?.title ?? "Loading..."), displayMode: .inline)
+        .navigationBarBackButtonHidden(false)
+        .onAppear {
+            Task {
+                do {
+                    movie = try await viewModel.fetchMovieDetails(currentMovieId: movieId)
+                    // Ensure movie is not nil before attempting to save
+                    if let fetchedMovie = movie {
+                        viewModel.saveLastViewedMovie(fetchedMovie)
+                    }
+                } catch {
+                    print(error)
                 }
             }
+        }
     }
-        
-    }
-    
+}

@@ -10,11 +10,7 @@ import SwiftUI
 @main
 struct movieListApp: App {
     @StateObject var viewModel = MovieViewModel()
-    @State private var navigatingToDetail = false
-
-    init() {
-           _navigatingToDetail = State(initialValue: UserDefaults.standard.integer(forKey: "LastViewedMovieID") != 0)
-    }
+    @State private var navigationPath = NavigationPath()
 
     
     func performInitialSetup() {
@@ -27,21 +23,16 @@ struct movieListApp: App {
     
     var body: some Scene {
            WindowGroup {
-               NavigationView {
-                   if navigatingToDetail, let movie = viewModel.loadLastViewedMovie(){
-                       MovieDetailView(movie: movie, viewModel: viewModel, navigatingToDetail: $navigatingToDetail)
-                   } else {
-                       MovieListView(navigatingToDetail: $navigatingToDetail)
-                   }
-               }.onAppear {
+               NavigationStack(path: $navigationPath) {
+                    MovieListView(viewModel: viewModel)
+                    .navigationDestination(for: MovieModel.self) { movie in
+                        MovieDetailView(movieId: movie.id, viewModel: viewModel)
+                    }
+                }.onAppear {
                    performInitialSetup()
-                   let lastId = viewModel.lastMovieId()
-                   if lastId != nil {
-                       navigatingToDetail = true
-                   }else{
-                       navigatingToDetail = false
-                   }
-                   print("Navigating to Detail: \(navigatingToDetail)")
+                    if let lastMovie = viewModel.loadLastViewedMovie() {
+                        navigationPath.append(lastMovie)
+                    }
                }
 
            }

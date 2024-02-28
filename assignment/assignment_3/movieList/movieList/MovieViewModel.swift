@@ -23,32 +23,56 @@ class MovieViewModel: ObservableObject{
     }
 
 
-    func fetchMovies(){
+    func fetchMovies(hardFetch: Bool){
         if movies.isEmpty{
-            guard let url = URL(string: "https://api.themoviedb.org/4/list/65056?page=1") else { return }
-            var request = URLRequest(url: url)
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            
-            URLSession.shared.dataTaskPublisher(for: request)
-                .map { response -> Data in
-                    let dataString = String(data: response.data, encoding: .utf8)!
-                    print("Received data string: \(dataString)")
-                    return response.data }
-                .decode(type: MovieResponse.self, decoder: JSONDecoder())
-                .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        print("Error fetching movies: \(error.localizedDescription)")
-                    case .finished:
-                        break
-                    }
-                }, receiveValue: { [weak self] response in
-                    self?.movies = response.results
-                })
-                .store(in: &cancellables)
-            saveMovies()
+            fetchFromUrl()
+        }else if hardFetch{
+            fetchFromUrl()
         }
+    }
+    
+    func fetchFromUrl(){
+        guard let url = URL(string: "https://api.themoviedb.org/4/list/65056?page=1") else { return }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTaskPublisher(for: request)
+            .map { response -> Data in
+                let dataString = String(data: response.data, encoding: .utf8)!
+                print("Received data string: \(dataString)")
+                return response.data }
+            .decode(type: MovieResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .failure(let error):
+                    print("Error fetching movies: \(error.localizedDescription)")
+                case .finished:
+                    break
+                }
+            }, receiveValue: { [weak self] response in
+                self?.movies = response.results
+            })
+            .store(in: &cancellables)
+        saveMovies()
+    }
+    
+    func fetchMovieDetails(currentMovieId : Int) async throws -> MovieModel{
+        let urlString = "https://api.themoviedb.org/3/movie/\(currentMovieId)"
+        guard let url = URL(string: urlString) else {
+                throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: request)
+        if let dataString = String(data: data, encoding: .utf8) {
+            print("Received data string: \(dataString)")
+        } else {
+            print("Failed to convert data to string.")
+        }
+        let decodedMovie = try JSONDecoder().decode(MovieModel.self, from: data)
+        return decodedMovie
+        
     }
     
     func saveLastViewedMovie(_ movie: MovieModel) {
