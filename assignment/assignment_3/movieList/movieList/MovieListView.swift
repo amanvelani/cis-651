@@ -14,13 +14,13 @@ struct MovieListView: View {
     var body: some View {
         VStack{
             List() {
-                ForEach(viewModel.movies){ movie in
+                ForEach(viewModel.moviesForCurrentPage){ movie in
                     NavigationLink(destination: MovieDetailView(movieId: movie.id, viewModel: viewModel)){
                         MovieRow(movie: movie)
                     }
                 }.onDelete(perform: deleteMovie)
             }
-            .navigationTitle("Movies")
+            .navigationTitle("Movies").padding([.top], 10)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -29,7 +29,62 @@ struct MovieListView: View {
                         Image(systemName: "arrow.clockwise")
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading){
+                    Image("movieListApp")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(20)
+                        .shadow(radius: 3)
+                }
             }
+            
+            HStack(spacing: 10) {
+                Button(action: {
+                    withAnimation {
+                        viewModel.currentPageInView = max(viewModel.currentPageInView - 1, 1)
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.left")
+                    }
+                    .padding()
+                    .background(viewModel.currentPageInView > 1 ? Color.blue.opacity(0.5) : Color.gray.opacity(0.5))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.blue, lineWidth: viewModel.currentPageInView > 1 ? 1 : 0)
+                    )
+                    .shadow(radius: 3)
+                }
+                .disabled(viewModel.currentPageInView <= 1)
+
+                Text("Page \(viewModel.currentPageInView) of \(viewModel.totalNumberOfPagesInView)")
+                    .fontWeight(.semibold)
+
+                Button(action: {
+                    withAnimation {
+                        viewModel.currentPageInView = min(viewModel.currentPageInView + 1, viewModel.totalNumberOfPagesInView)
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.right")
+                    }
+                    .padding()
+                    .background(viewModel.currentPageInView < viewModel.totalNumberOfPagesInView ? Color.blue.opacity(0.5) : Color.gray.opacity(0.5))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10) // Use the same corner radius as the background
+                            .stroke(Color.blue, lineWidth: viewModel.currentPageInView < viewModel.totalNumberOfPagesInView ? 1 : 0)
+                    )
+                    .shadow(radius: 3)
+                }
+                .disabled(viewModel.currentPageInView >= viewModel.totalNumberOfPagesInView)
+            }
+            .padding()
+
         }.onAppear {
             UserDefaults.standard.removeObject(forKey: "LastViewedMovieID")
             UserDefaults.standard.removeObject(forKey: "LastViewedMovie")
@@ -40,16 +95,24 @@ struct MovieListView: View {
             
             
     private func deleteMovie(at offsets: IndexSet) {
-        let idsToDelete = offsets.compactMap { viewModel.movies[$0].id }
-        viewModel.movies.remove(atOffsets: offsets)
+        let globalOffsets = offsets.map { ($0 + (viewModel.currentPageInView - 1) * viewModel.moviesPerPageInView) }
+        let globalIndexSet = IndexSet(globalOffsets)
+
+        let idsToDelete = globalIndexSet.compactMap { viewModel.movies[$0].id }
+
+        viewModel.movies.remove(atOffsets: globalIndexSet)
+
         viewModel.saveMovies()
-            
+
         if let lastMovieId = viewModel.lastMovieId(), idsToDelete.contains(lastMovieId) {
             UserDefaults.standard.removeObject(forKey: "LastViewedMovie")
             UserDefaults.standard.removeObject(forKey: "LastViewedMovieID")
             viewModel.lastViewedMovieId = nil
         }
+        viewModel.currentPageInView = min(viewModel.currentPageInView, viewModel.totalNumberOfPagesInView)
+
     }
+
 
 }
 

@@ -8,15 +8,54 @@
 import Foundation
 import Combine
 
+// Referance : https://nshipster.com/secrets/
+enum Configuration {
+    enum Error: Swift.Error {
+        case missingKey, invalidValue
+    }
+
+    static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
+        guard let object = Bundle.main.object(forInfoDictionaryKey:key) else {
+            throw Error.missingKey
+        }
+
+        switch object {
+        case let value as T:
+            return value
+        case let string as String:
+            guard let value = T(string) else { fallthrough }
+            return value
+        default:
+            throw Error.invalidValue
+        }
+    }
+}
+
+enum API {
+    static var token: String {
+        return (try? Configuration.value(for: "API_TOKEN")) ?? ""
+    }
+}
+
 class MovieViewModel: ObservableObject{
     @Published var movies = [MovieModel]()
-    @Published var keychain = KeychainHelper()
     
     var lastViewedMovieId: Int?
 
     private var cancellables = Set<AnyCancellable>()
     var listId = 65056
-    lazy var token: String = self.keychain.retrieveToken()
+    lazy var token: String = API.token
+    
+    @Published var currentPageInView = 1
+    let moviesPerPageInView = 10
+    var totalNumberOfPagesInView: Int {
+        (movies.count + moviesPerPageInView - 1) / moviesPerPageInView
+    }
+
+    var moviesForCurrentPage: [MovieModel] {
+        Array(movies.dropFirst((currentPageInView - 1) * moviesPerPageInView).prefix(moviesPerPageInView))
+    }
+
 
     init() {
         loadMovies()
@@ -25,37 +64,46 @@ class MovieViewModel: ObservableObject{
 
     func fetchMovies(hardFetch: Bool){
         if movies.isEmpty{
-            fetchFromUrl()
+            movies = []
+            fetchMoviesPage(byPageNumber: 1)
         }else if hardFetch{
-            fetchFromUrl()
+            movies = []
+            fetchMoviesPage(byPageNumber: 1)
         }
     }
     
-    func fetchFromUrl(){
-        guard let url = URL(string: "https://api.themoviedb.org/4/list/65056?page=1") else { return }
+    func fetchMoviesPage(byPageNumber pageNumber: Int) {
+        print(token)
+        guard pageNumber < 4 else {
+            saveMovies()
+            return
+        }
+        
+        guard let url = URL(string: "https://api.themoviedb.org/4/list/65056?page=\(pageNumber)") else { return }
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
+
         URLSession.shared.dataTaskPublisher(for: request)
             .map { response -> Data in
                 let dataString = String(data: response.data, encoding: .utf8)!
                 print("Received data string: \(dataString)")
-                return response.data }
+                return response.data
+            }
             .decode(type: MovieResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
+            .sink(receiveCompletion: { [weak self] completion in
                 switch completion {
-                case .failure(let error):
-                    print("Error fetching movies: \(error.localizedDescription)")
-                case .finished:
-                    break
+                    case .failure(let error):
+                        print("Error fetching movies for page \(pageNumber): \(error.localizedDescription)")
+                    case .finished:
+                        self?.fetchMoviesPage(byPageNumber: pageNumber + 1)
                 }
             }, receiveValue: { [weak self] response in
-                self?.movies = response.results
+                self?.movies.append(contentsOf: response.results)
             })
             .store(in: &cancellables)
-        saveMovies()
     }
+
     
     func fetchMovieDetails(currentMovieId : Int) async throws -> MovieModel{
         let urlString = "https://api.themoviedb.org/3/movie/\(currentMovieId)"

@@ -17,7 +17,6 @@
 		076498892B8B2C6D0048AF6D /* MovieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076498882B8B2C6C0048AF6D /* MovieViewModel.swift */; };
 		0764988B2B8BB3850048AF6D /* MovieListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0764988A2B8BB3850048AF6D /* MovieListView.swift */; };
 		0764988D2B8BB3DB0048AF6D /* MovieDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0764988C2B8BB3DB0048AF6D /* MovieDetailView.swift */; };
-		0764988F2B8BC3210048AF6D /* KeyChainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0764988E2B8BC3200048AF6D /* KeyChainHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		074861132B8F1749006C64B0 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		074861142B8F1E51006C64B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		076498592B8B2B0E0048AF6D /* movieList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = movieList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0764985C2B8B2B0E0048AF6D /* movieListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = movieListApp.swift; sourceTree = "<group>"; };
 		076498602B8B2B100048AF6D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -51,7 +52,6 @@
 		076498882B8B2C6C0048AF6D /* MovieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieViewModel.swift; sourceTree = "<group>"; };
 		0764988A2B8BB3850048AF6D /* MovieListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListView.swift; sourceTree = "<group>"; };
 		0764988C2B8BB3DB0048AF6D /* MovieDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailView.swift; sourceTree = "<group>"; };
-		0764988E2B8BC3200048AF6D /* KeyChainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +102,7 @@
 		0764985B2B8B2B0E0048AF6D /* movieList */ = {
 			isa = PBXGroup;
 			children = (
+				074861142B8F1E51006C64B0 /* Info.plist */,
 				0764985C2B8B2B0E0048AF6D /* movieListApp.swift */,
 				076498602B8B2B100048AF6D /* Assets.xcassets */,
 				076498622B8B2B100048AF6D /* Preview Content */,
@@ -109,7 +110,7 @@
 				076498882B8B2C6C0048AF6D /* MovieViewModel.swift */,
 				0764988A2B8BB3850048AF6D /* MovieListView.swift */,
 				0764988C2B8BB3DB0048AF6D /* MovieDetailView.swift */,
-				0764988E2B8BC3200048AF6D /* KeyChainHelper.swift */,
+				074861132B8F1749006C64B0 /* Config.xcconfig */,
 			);
 			path = movieList;
 			sourceTree = "<group>";
@@ -272,7 +273,6 @@
 				0764988D2B8BB3DB0048AF6D /* MovieDetailView.swift in Sources */,
 				076498872B8B2B740048AF6D /* MovieModel.swift in Sources */,
 				0764988B2B8BB3850048AF6D /* MovieListView.swift in Sources */,
-				0764988F2B8BC3210048AF6D /* KeyChainHelper.swift in Sources */,
 				0764985D2B8B2B0E0048AF6D /* movieListApp.swift in Sources */,
 				076498892B8B2C6D0048AF6D /* MovieViewModel.swift in Sources */,
 			);
@@ -313,6 +313,7 @@
 /* Begin XCBuildConfiguration section */
 		0764987B2B8B2B110048AF6D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 074861132B8F1749006C64B0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -345,6 +346,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -376,6 +378,7 @@
 		};
 		0764987C2B8B2B110048AF6D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 074861132B8F1749006C64B0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -408,6 +411,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -432,6 +436,7 @@
 		};
 		0764987E2B8B2B110048AF6D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 074861132B8F1749006C64B0 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -441,6 +446,7 @@
 				DEVELOPMENT_TEAM = H8QLG9SHVC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = movieList/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -461,6 +467,7 @@
 		};
 		0764987F2B8B2B110048AF6D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 074861132B8F1749006C64B0 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -470,6 +477,7 @@
 				DEVELOPMENT_TEAM = H8QLG9SHVC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = movieList/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
