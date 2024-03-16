@@ -1,5 +1,13 @@
+//
+//  MovieViewModel.swift
+//  movieList
+//
+//  Created by Aman Velani on 2/25/24.
+//
+
 import Foundation
 
+// Model for Movie
 struct MovieModel: Identifiable, Decodable, Encodable, Hashable {
     let id: Int
     let title: String
@@ -24,11 +32,13 @@ struct MovieModel: Identifiable, Decodable, Encodable, Hashable {
     }
 }
 
+// Model for Genre
 struct Genre: Identifiable, Decodable, Encodable, Hashable {
     let id: Int
     let name: String
 }
 
+// Model for Movie Response
 struct MovieResponse: Decodable {
     let results: [MovieModel]
 }

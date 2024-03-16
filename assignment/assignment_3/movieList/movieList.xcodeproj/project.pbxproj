@@ -102,14 +102,13 @@
 		0764985B2B8B2B0E0048AF6D /* movieList */ = {
 			isa = PBXGroup;
 			children = (
+				07B6E9762B92A0B400A8B202 /* View */,
+				07B6E9752B92A0A300A8B202 /* ViewModel */,
 				074861142B8F1E51006C64B0 /* Info.plist */,
+				07B6E9732B92A06700A8B202 /* Model */,
 				0764985C2B8B2B0E0048AF6D /* movieListApp.swift */,
 				076498602B8B2B100048AF6D /* Assets.xcassets */,
 				076498622B8B2B100048AF6D /* Preview Content */,
-				076498862B8B2B740048AF6D /* MovieModel.swift */,
-				076498882B8B2C6C0048AF6D /* MovieViewModel.swift */,
-				0764988A2B8BB3850048AF6D /* MovieListView.swift */,
-				0764988C2B8BB3DB0048AF6D /* MovieDetailView.swift */,
 				074861132B8F1749006C64B0 /* Config.xcconfig */,
 			);
 			path = movieList;
@@ -138,6 +137,31 @@
 				076498792B8B2B110048AF6D /* movieListUITestsLaunchTests.swift */,
 			);
 			path = movieListUITests;
+			sourceTree = "<group>";
+		};
+		07B6E9732B92A06700A8B202 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				076498862B8B2B740048AF6D /* MovieModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		07B6E9752B92A0A300A8B202 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				076498882B8B2C6C0048AF6D /* MovieViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		07B6E9762B92A0B400A8B202 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0764988C2B8BB3DB0048AF6D /* MovieDetailView.swift */,
+				0764988A2B8BB3850048AF6D /* MovieListView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -316,7 +340,6 @@
 			baseConfigurationReference = 074861132B8F1749006C64B0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -381,7 +404,7 @@
 			baseConfigurationReference = 074861132B8F1749006C64B0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME[sdk=iphoneos*]" = Assets.xcassets;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -452,6 +475,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -483,6 +507,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -7,35 +7,64 @@
 
 import SwiftUI
 
+// View for Movie Detail
 struct MovieDetailView: View {
     let movieId: Int
     @StateObject var viewModel: MovieViewModel
     @State var movie: MovieModel?
     @State private var text: String = ""
-    
+    // ScrollView for Movie Detail
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
+                // Horizontal ScrollView for Movie Poster and Backdrop
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(0..<2, id: \.self) { _ in // For demo purposes; ideally, use actual images if available
+                        ForEach(0..<2, id: \.self) { _ in
                             if let posterPath = movie?.posterPath {
                                 let posterURL = URL(string: "https://image.tmdb.org/t/p/w342\(posterPath)")
-                                AsyncImage(url: posterURL)
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(height: 300)
+                                AsyncImage(url: posterURL) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFit()
+                                    case .failure(_):
+                                        Color.red
+                                    case .empty:
+                                        Color.blue
+                                    @unknown default:
+                                        Color.gray
+                                    }
+                                }
+                                .frame(width: UIScreen.main.bounds.width, height: 450)
+                                .clipped()
                             }
                             if let backdropPath = movie?.backdropPath {
                                 let backdropURL = URL(string: "https://image.tmdb.org/t/p/w342\(backdropPath)")
-                                AsyncImage(url: backdropURL)
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(height: 300)
+                                AsyncImage(url: backdropURL) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFit()
+                                    case .failure(_):
+                                        Color.red
+                                    case .empty:
+                                        Color.blue
+                                    @unknown default:
+                                        Color.gray
+                                    }
+                                }
+                                .frame(width: UIScreen.main.bounds.width, height: 450)
+                                .clipped()
                             }
                         }
                     }
                 }
-                .frame(height: 300)
-                
+                .frame(height: 450)
+
+                // View for Movie Title, Tagline, Rating, Genres, Release Date, and Runtime
                 if let title = movie?.title {
                     Text(title)
                         .font(.largeTitle)
@@ -106,8 +135,6 @@ struct MovieDetailView: View {
                     .background(Color(.systemBackground))
                     .cornerRadius(10)
                     .shadow(radius: 3)
-
-                    
             }
             .padding()
         }
@@ -116,8 +143,9 @@ struct MovieDetailView: View {
         .onAppear {
             Task {
                 do {
+                    // Fetch movie details
                     movie = try await viewModel.fetchMovieDetails(currentMovieId: movieId)
-                    // Ensure movie is not nil before attempting to save
+                    // Save last viewed movie for persistance
                     if let fetchedMovie = movie {
                         viewModel.saveLastViewedMovie(fetchedMovie)
                     }

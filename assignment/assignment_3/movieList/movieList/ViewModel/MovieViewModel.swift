@@ -30,7 +30,7 @@ enum Configuration {
         }
     }
 }
-
+// API configuration, specifically for fetching the API token
 enum API {
     static var token: String {
         return (try? Configuration.value(for: "API_TOKEN")) ?? ""
@@ -41,55 +41,60 @@ class MovieViewModel: ObservableObject{
     @Published var movies = [MovieModel]()
     
     var lastViewedMovieId: Int?
-
+    // cancellables is a set of AnyCancellable objects that are used to store the AnyCancellable instances returned by the sink(receiveCompletion:receiveValue:) method.
     private var cancellables = Set<AnyCancellable>()
+    // List ID for fetching of movies
     var listId = 65056
+    // Get API token from Configuration
     lazy var token: String = API.token
     
+    // Used for pagination
     @Published var currentPageInView = 1
     let moviesPerPageInView = 10
     var totalNumberOfPagesInView: Int {
         (movies.count + moviesPerPageInView - 1) / moviesPerPageInView
     }
 
+    // Movies for current page
     var moviesForCurrentPage: [MovieModel] {
         Array(movies.dropFirst((currentPageInView - 1) * moviesPerPageInView).prefix(moviesPerPageInView))
     }
 
-
+    // Load movies on initialization
     init() {
         loadMovies()
     }
 
 
     func fetchMovies(hardFetch: Bool){
+        // If movies are empty, fetch movies
         if movies.isEmpty{
             movies = []
             fetchMoviesPage(byPageNumber: 1)
-        }else if hardFetch{
+        }else if hardFetch{ // If hardFetch is true, fetch movies
             movies = []
             fetchMoviesPage(byPageNumber: 1)
         }
     }
     
     func fetchMoviesPage(byPageNumber pageNumber: Int) {
-        print(token)
         guard pageNumber < 4 else {
             saveMovies()
             return
         }
         
+        // URL for fetching movies
         guard let url = URL(string: "https://api.themoviedb.org/4/list/65056?page=\(pageNumber)") else { return }
         var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // Set token in header
 
-        URLSession.shared.dataTaskPublisher(for: request)
+        URLSession.shared.dataTaskPublisher(for: request) // Url session for fetching movies
             .map { response -> Data in
                 let dataString = String(data: response.data, encoding: .utf8)!
                 print("Received data string: \(dataString)")
                 return response.data
             }
-            .decode(type: MovieResponse.self, decoder: JSONDecoder())
+            .decode(type: MovieResponse.self, decoder: JSONDecoder()) // Decode response
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 switch completion {
@@ -104,7 +109,7 @@ class MovieViewModel: ObservableObject{
             .store(in: &cancellables)
     }
 
-    
+    // Fetch movie details via id
     func fetchMovieDetails(currentMovieId : Int) async throws -> MovieModel{
         let urlString = "https://api.themoviedb.org/3/movie/\(currentMovieId)"
         guard let url = URL(string: urlString) else {
@@ -123,13 +128,15 @@ class MovieViewModel: ObservableObject{
         
     }
     
+    // Save last viewed movie for persistance
     func saveLastViewedMovie(_ movie: MovieModel) {
         if let movieData = try? JSONEncoder().encode(movie) {
-            UserDefaults.standard.set(movieData, forKey: "LastViewedMovie")
-            UserDefaults.standard.set(movie.id, forKey: "LastViewedMovieID") // Save ID separately if needed.
+            UserDefaults.standard.set(movieData, forKey: "LastViewedMovie") // Save movie in user defaults for persistance
+            UserDefaults.standard.set(movie.id, forKey: "LastViewedMovieID") // Save movie ID in user defaults for persistance
         }
     }
-        
+    
+    // Load last viewed movie for persistance
     func loadLastViewedMovie() -> MovieModel? {
         if let lastMovieData = UserDefaults.standard.data(forKey: "LastViewedMovie"),
             let lastMovie = try? JSONDecoder().decode(MovieModel.self, from: lastMovieData) {
@@ -138,21 +145,23 @@ class MovieViewModel: ObservableObject{
             return nil
     }
     
+    // Save last viewed movie ID for persistance
     func lastMovieId() -> Int? {
         return UserDefaults.standard.integer(forKey: "LastViewedMovieID")
     }
     
+    // Save movies for persistance
     func saveMovies() {
             if let encoded = try? JSONEncoder().encode(movies) {
                 UserDefaults.standard.set(encoded, forKey: "SavedMovies")
             }
         }
 
+    // Load movies for persistance
     func loadMovies() {
         if let savedMovies = UserDefaults.standard.data(forKey: "SavedMovies"),
             let decodedMovies = try? JSONDecoder().decode([MovieModel].self, from: savedMovies) {
             self.movies = decodedMovies
         }
     }
-
 }

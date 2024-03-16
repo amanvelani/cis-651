@@ -6,25 +6,24 @@
 //
 import SwiftUI
 
-
 @main
 struct movieListApp: App {
-    @StateObject var viewModel = MovieViewModel()
-    @State private var navigationPath = NavigationPath()
+    @StateObject var viewModel = MovieViewModel() // ViewModel for managing movie data
+    @State private var navigationPath = NavigationPath() // Navigation state management
 
     var body: some Scene {
            WindowGroup {
-               NavigationStack(path: $navigationPath) {
-                    MovieListView(viewModel: viewModel)
-                    .navigationDestination(for: MovieModel.self) { movie in
-                        MovieDetailView(movieId: movie.id, viewModel: viewModel)
+               NavigationStack(path: $navigationPath) { // Manage navigation for movie views
+                    MovieListView(viewModel: viewModel) // Initial movie list view
+                    .navigationDestination(for: MovieModel.self) { movie in // Destination for selected movie
+                        MovieDetailView(movieId: movie.id, viewModel: viewModel) // Detail view for selected movie
                     }
-                }.onAppear {
-                    if let lastMovie = viewModel.loadLastViewedMovie() {
-                        navigationPath.append(lastMovie)
+                }.onAppear { // Actions when view appears
+                    if let lastMovie = viewModel.loadLastViewedMovie() { // Check for last viewed movie
+                        navigationPath.append(lastMovie) // Navigate to last viewed movie
                     }
                }
-
            }
        }
 }
+

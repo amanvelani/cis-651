@@ -7,24 +7,25 @@
 
 import SwiftUI
 
+// View for Movie List
 struct MovieListView: View {
     @StateObject var viewModel = MovieViewModel()
 
-
+    // List View of Movies
     var body: some View {
         VStack{
             List() {
-                ForEach(viewModel.moviesForCurrentPage){ movie in
-                    NavigationLink(destination: MovieDetailView(movieId: movie.id, viewModel: viewModel)){
+                ForEach(viewModel.moviesForCurrentPage){ movie in // Loop through movies
+                    NavigationLink(destination: MovieDetailView(movieId: movie.id, viewModel: viewModel)){ // Navigate to Movie Detail View
                         MovieRow(movie: movie)
                     }
                 }.onDelete(perform: deleteMovie)
             }
-            .navigationTitle("Movies").padding([.top], 10)
+            .navigationTitle("Movies")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        viewModel.fetchMovies(hardFetch: true)
+                        viewModel.fetchMovies(hardFetch: true) // Hard fetch feature to fetch movies
                     }){
                         Image(systemName: "arrow.clockwise")
                     }
@@ -32,13 +33,13 @@ struct MovieListView: View {
                 ToolbarItem(placement: .navigationBarLeading){
                     Image("movieListApp")
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 50, height: 50)
-                        .cornerRadius(20)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35, height: 35)
+                        .cornerRadius(15)
                         .shadow(radius: 3)
                 }
             }
-            
+            // Pagination for Movies
             HStack(spacing: 10) {
                 Button(action: {
                     withAnimation {
@@ -76,7 +77,7 @@ struct MovieListView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10) // Use the same corner radius as the background
+                        RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.blue, lineWidth: viewModel.currentPageInView < viewModel.totalNumberOfPagesInView ? 1 : 0)
                     )
                     .shadow(radius: 3)
@@ -86,36 +87,41 @@ struct MovieListView: View {
             .padding()
 
         }.onAppear {
-            UserDefaults.standard.removeObject(forKey: "LastViewedMovieID")
-            UserDefaults.standard.removeObject(forKey: "LastViewedMovie")
-            viewModel.lastViewedMovieId = nil
-            viewModel.fetchMovies(hardFetch : false)
+            UserDefaults.standard.removeObject(forKey: "LastViewedMovieID") // Remove last viewed movie
+            UserDefaults.standard.removeObject(forKey: "LastViewedMovie") // Remove last viewed movie
+            viewModel.lastViewedMovieId = nil // Set last viewed movie to nil
+            viewModel.fetchMovies(hardFetch : false) // Fetch movies if movies are not available
         }
     }
             
-            
+    // Logic to delete movie
     private func deleteMovie(at offsets: IndexSet) {
+        // find the global index of the movie to delete
         let globalOffsets = offsets.map { ($0 + (viewModel.currentPageInView - 1) * viewModel.moviesPerPageInView) }
         let globalIndexSet = IndexSet(globalOffsets)
 
         let idsToDelete = globalIndexSet.compactMap { viewModel.movies[$0].id }
 
+        // remove the movies from the view model
         viewModel.movies.remove(atOffsets: globalIndexSet)
 
+        // save the movies after deletion
         viewModel.saveMovies()
 
+        // if the last viewed movie is deleted, remove it from user defaults
         if let lastMovieId = viewModel.lastMovieId(), idsToDelete.contains(lastMovieId) {
             UserDefaults.standard.removeObject(forKey: "LastViewedMovie")
             UserDefaults.standard.removeObject(forKey: "LastViewedMovieID")
             viewModel.lastViewedMovieId = nil
         }
+        // update the current page if the last page is deleted
         viewModel.currentPageInView = min(viewModel.currentPageInView, viewModel.totalNumberOfPagesInView)
-
     }
 
 
 }
 
+// Custom view for Movie Row
 struct MovieRow: View {
     let movie: MovieModel
 
