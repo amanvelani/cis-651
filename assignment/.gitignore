@@ -4,5 +4,3 @@
 *.zip
 *.mov
 extra/
-*.xcconfig
-*.xcodeproj

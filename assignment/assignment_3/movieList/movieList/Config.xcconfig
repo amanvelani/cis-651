@@ -1,0 +1,11 @@
+//
+//  Config.xcconfig
+//  movieList
+//
+//  Created by Aman Velani on 2/28/24.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+API_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZDM1MTg2MDM3YWIxNjhjNTdjZTE0MGE3YmI5M2EyNyIsInN1YiI6IjY1ZDkyODdiNDJmMTlmMDE4NjFhMTdjMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.PSYURxQF-mMOrmRqu1nh-RpKBJXdtSUO0BeJpxzWUwM
