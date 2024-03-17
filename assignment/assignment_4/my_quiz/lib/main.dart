@@ -131,9 +131,8 @@ class _QuizPageState extends State<QuizPage> {
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: CupertinoColors.systemBlue,
-                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
                       'Total Rounds: $totalRounds',
@@ -160,26 +159,35 @@ class _QuizPageState extends State<QuizPage> {
                     ),
                   ),
                 const SizedBox(
-                    width: 10), // Space between the text and the button
-                // Play/Play Again button
+                  width: 5,
+                ), // Space between the text and the button
+// Play/Play Again button
                 if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
                   CupertinoButton.filled(
                     onPressed: _generateExpression,
-                    child: Text(isFirstPlay ? 'Play' : 'Play Again'),
+                    child: Padding(
+                      // Reduce padding to make the button content smaller
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      child: Text(isFirstPlay ? 'Play' : 'Play Again',
+                          style: const TextStyle(
+                              fontSize: 8)), // Reduced font size
+                    ),
                   )
                 else
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent),
-                    onPressed: _generateExpression,
-                    child: Padding(
+                      backgroundColor: Colors.blueAccent,
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 5.0),
-                      child: Text(
-                        isFirstPlay ? 'Play' : 'Play Again',
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.white),
-                      ),
+                          vertical: 8.0, horizontal: 10.0),
+                    ),
+                    onPressed: _generateExpression,
+                    child: Text(
+                      isFirstPlay ? 'Play' : 'Play Again',
+                      style: const TextStyle(
+                          fontSize: 8,
+                          color: Colors
+                              .white), // Adjusted font size for consistency
                     ),
                   ),
               ],
