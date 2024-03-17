@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 
 void main() => runApp(const MyQuiz());
 
+// This class is the root of the application.
+// It is a stateless widget because it doesn't need to maintain any state.
 class MyQuiz extends StatelessWidget {
   const MyQuiz({super.key});
 
@@ -43,6 +45,8 @@ class MyQuiz extends StatelessWidget {
   }
 }
 
+// This class is the stateful widget that the main application instantiates.
+// It maintains the state for the QuizPage.
 class QuizPage extends StatefulWidget {
   const QuizPage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -52,6 +56,8 @@ class QuizPage extends StatefulWidget {
   _QuizPageState createState() => _QuizPageState();
 }
 
+// This class is the state for the QuizPage.
+// It maintains the state for the QuizPage.
 class _QuizPageState extends State<QuizPage> {
   int? numberOne;
   int? numberTwo;
@@ -96,6 +102,8 @@ class _QuizPageState extends State<QuizPage> {
           );
   }
 
+// This method builds the body of the page.
+// It is called from the build method.
   Widget buildPageBody(BuildContext context) {
     return Center(
       child: OrientationBuilder(builder: (context, orientation) {
@@ -125,19 +133,15 @@ class _QuizPageState extends State<QuizPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Enhanced Total Rounds display
+                // Total Rounds display
                 if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
-                  // Cupertino Design
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                    decoration: const BoxDecoration(
-                      color: CupertinoColors.systemBlue,
-                    ),
                     child: Text(
                       'Total Rounds: $totalRounds',
                       style: const TextStyle(
-                          color: CupertinoColors.white, fontSize: 12),
+                          color: CupertinoColors.black, fontSize: 16),
                     ),
                   )
                 else
@@ -160,18 +164,16 @@ class _QuizPageState extends State<QuizPage> {
                   ),
                 const SizedBox(
                   width: 5,
-                ), // Space between the text and the button
-// Play/Play Again button
+                ),
+                // Play/Play Again button
                 if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
                   CupertinoButton.filled(
                     onPressed: _generateExpression,
                     child: Padding(
-                      // Reduce padding to make the button content smaller
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 4.0),
                       child: Text(isFirstPlay ? 'Play' : 'Play Again',
-                          style: const TextStyle(
-                              fontSize: 8)), // Reduced font size
+                          style: const TextStyle(fontSize: 8)),
                     ),
                   )
                 else
@@ -184,10 +186,7 @@ class _QuizPageState extends State<QuizPage> {
                     onPressed: _generateExpression,
                     child: Text(
                       isFirstPlay ? 'Play' : 'Play Again',
-                      style: const TextStyle(
-                          fontSize: 8,
-                          color: Colors
-                              .white), // Adjusted font size for consistency
+                      style: const TextStyle(fontSize: 8, color: Colors.white),
                     ),
                   ),
               ],
