@@ -138,7 +138,7 @@ class _QuizPageState extends State<QuizPage> {
                     child: Text(
                       'Total Rounds: $totalRounds',
                       style: const TextStyle(
-                          color: CupertinoColors.white, fontSize: 16),
+                          color: CupertinoColors.white, fontSize: 12),
                     ),
                   )
                 else
