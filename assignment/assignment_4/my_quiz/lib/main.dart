@@ -150,17 +150,17 @@ class _QuizPageState extends State<QuizPage> {
                       child: Text(
                         '$totalRounds',
                         style:
-                            const TextStyle(fontSize: 14, color: Colors.white),
+                            const TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ),
                     label: Text(
                       'Total Rounds',
                       style:
-                          TextStyle(fontSize: 18, color: Colors.blue.shade900),
+                          TextStyle(fontSize: 12, color: Colors.blue.shade900),
                     ),
                   ),
                 const SizedBox(
-                    width: 20), // Space between the text and the button
+                    width: 10), // Space between the text and the button
                 // Play/Play Again button
                 if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
                   CupertinoButton.filled(
@@ -174,7 +174,7 @@ class _QuizPageState extends State<QuizPage> {
                     onPressed: _generateExpression,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20.0),
+                          vertical: 10.0, horizontal: 5.0),
                       child: Text(
                         isFirstPlay ? 'Play' : 'Play Again',
                         style:
@@ -197,7 +197,7 @@ class _QuizPageState extends State<QuizPage> {
                 onPressed: _solveExpression,
                 child: const Padding(
                   padding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   child: Text('Solve',
                       style: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
