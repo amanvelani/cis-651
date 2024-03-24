@@ -173,7 +173,7 @@ class _QuizPageState extends State<QuizPage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 4.0),
                       child: Text(isFirstPlay ? 'Play' : 'Play Again',
-                          style: const TextStyle(fontSize: 8)),
+                          style: const TextStyle(fontSize: 12)),
                     ),
                   )
                 else
@@ -186,7 +186,7 @@ class _QuizPageState extends State<QuizPage> {
                     onPressed: _generateExpression,
                     child: Text(
                       isFirstPlay ? 'Play' : 'Play Again',
-                      style: const TextStyle(fontSize: 8, color: Colors.white),
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
               ],
